@@ -1,4 +1,4 @@
-package com.example.fx.secondStaX.services;
+package com.example.fx.secondStaX.services.impl;
 
 import com.example.fx.secondStaX.model.ProviderOffer;
 import org.springframework.core.ParameterizedTypeReference;
@@ -15,7 +15,7 @@ import java.util.Optional;
 @Service
 public class ProviderOfferService {
 
-    private RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate = new RestTemplate();
 
     public List<ProviderOffer> getProviderOffers(Double amount, String currency) {
         List<ProviderOffer> providerOffers = new ArrayList<>();
