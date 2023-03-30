@@ -1,107 +1,58 @@
 package com.example.fx.secondStaX.contollers;
 
-import com.example.fx.secondStaX.model.BankAccount;
+import com.example.fx.secondStaX.dtos.requests.BankAccountRequestDto;
+import com.example.fx.secondStaX.dtos.requests.ClientRequestDto;
+import com.example.fx.secondStaX.dtos.response.ClientResponseDto;
 import com.example.fx.secondStaX.model.Client;
-import com.example.fx.secondStaX.model.ProviderOffer;
-import com.example.fx.secondStaX.repositories.ClientRequestRepository;
-import com.example.fx.secondStaX.services.BankAccountService;
-import com.example.fx.secondStaX.services.ProviderOfferService;
+import com.example.fx.secondStaX.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
+
+import static org.springframework.http.HttpStatus.ACCEPTED;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping("/client/request")
 public class ClientRequestController {
 
     @Autowired
-    private ClientRequestRepository clientRequestRepository;
+    private ClientService clientService;
 
-    @Autowired
-    private ProviderOfferService providerOfferService;
-
-    @Autowired
-    private BankAccountService bankAccountService;
-
-    @PostMapping
-    public ResponseEntity<Client> createClientRequest(@RequestBody Client client) {
-        // Save the client request to the database
-        client.setStatus("PENDING");
-        Client savedClient = clientRequestRepository.save(client);
-
-        // Return the saved client request
-        return ResponseEntity.ok(savedClient);
+    @PostMapping("/")
+    public ResponseEntity<ClientResponseDto> createClientRequest(@RequestBody ClientRequestDto client) {
+        return new ResponseEntity<>(clientService.saveClient(client), CREATED);
     }
 
-    @GetMapping("/{id}/provider")
-    public ResponseEntity<List<ProviderOffer>> getProviderOffers(@PathVariable Long id) {
-        // Get the client request from the database
-        Optional<Client> optionalClientRequest = clientRequestRepository.findById(id);
-        if (optionalClientRequest.isPresent()) {
-            Client client = optionalClientRequest.get();
-
-            // Get the provider offers using the providerOfferService
-            List<ProviderOffer> providerOffers = providerOfferService.getProviderOffers(client.getAmount(), client.getCurrency());
-
-            // Return the provider offers
-            return ResponseEntity.ok(providerOffers);
-        } else {
-            // Client request not found
-            return ResponseEntity.notFound().build();
-        }
+    @PutMapping("/{id}/")
+    public ResponseEntity<ClientResponseDto> updateClient(@PathVariable Long id, @RequestBody ClientRequestDto client) {
+        return new ResponseEntity<>(clientService.updateClient(id, client), ACCEPTED);
     }
 
-    @PutMapping("/{id}/provider")
-    public ResponseEntity<Client> updateProvider(@PathVariable Long id, @RequestParam Long providerId) {
-        // Get the client request from the database
-        Optional<Client> optionalClientRequest = clientRequestRepository.findById(id);
-        if (optionalClientRequest.isPresent()) {
-            Client client = optionalClientRequest.get();
-
-            // Update the provider for the client request
-            Optional<ProviderOffer> optionalProviderOffer = providerOfferService.getProviderOffer(providerId);
-            if (optionalProviderOffer.isPresent()) {
-
-                // Update the client request in the database
-                Client updatedClient = clientRequestRepository.save(client);
-
-                // Return the updated client request
-                return ResponseEntity.ok(updatedClient);
-            } else {
-                // Provider not found
-                return ResponseEntity.notFound().build();
-            }
-        } else {
-            // Client request not found
-            return ResponseEntity.notFound().build();
-        }
+    @GetMapping("/{id}/")
+    public ResponseEntity<ClientResponseDto> getClientById(@PathVariable Long id) {
+        return new ResponseEntity<>(clientService.getClientById(id), OK);
     }
 
+    @GetMapping("/")
+    public ResponseEntity<List<ClientResponseDto>> getAllClients() {
+        return new ResponseEntity<>(clientService.getAllClients(), OK);
+    }
+
+    //set bank account
     @PutMapping("/{id}/bank-account")
-    public ResponseEntity<Client> updateBankAccount(@PathVariable Long id, @RequestParam Long bankAccountId) {
-        // Get the client request from the database
-        Optional<Client> optionalClientRequest = clientRequestRepository.findById(id);
-        if (optionalClientRequest.isPresent()) {
-            Client client = optionalClientRequest.get();
-
-            // Update the bank account for the client request
-            Optional<BankAccount> optionalBankAccount = bankAccountService.getBankAccount(bankAccountId);
-            if (optionalBankAccount.isPresent()) {
-                client.setBankAccount(optionalBankAccount.get());
-
-                Client updatedClient = clientRequestRepository.save(client);
-
-                return ResponseEntity.ok(updatedClient);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<String> addBankAccount(@PathVariable Long id, @RequestBody BankAccountRequestDto bankAccountRequest) {
+        return new ResponseEntity<>("Added account: " + clientService.addBankAccount(id, bankAccountRequest), ACCEPTED);
     }
-
 }
 

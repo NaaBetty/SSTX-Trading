@@ -26,8 +26,8 @@ public class ProviderOffer {
     @JoinColumn(name = "provider_id")
     private Provider provider;
 
-    @OneToMany(mappedBy = "trade", cascade = CascadeType.ALL)
-    private List<Trade> trades;
+//    @OneToMany(mappedBy = "provider", cascade = CascadeType.ALL)
+//    private List<Trade> trades;
 
     public ProviderOffer() {
 

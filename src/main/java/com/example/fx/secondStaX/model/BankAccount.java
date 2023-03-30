@@ -3,10 +3,13 @@ package com.example.fx.secondStaX.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Entity
 @Setter
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Table(name = "bank_account")
 public class BankAccount {
@@ -14,22 +17,17 @@ public class BankAccount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false)
-    private String name;
-
     @Column(name = "account_number", nullable = false)
     private String accountNumber;
 
     @Column(name = "bank_name", nullable = false)
     private String bankName;
 
-    public BankAccount() {
-    }
+    @ManyToOne
+    @JoinColumn(name = "client_id")
+    private Client client;
 
-    public BankAccount(String name, String accountNumber, String bankName) {
-        this.name = name;
-        this.accountNumber = accountNumber;
-        this.bankName = bankName;
-    }
+    @Column(name = "account_balance", nullable = false)
+    private BigDecimal accountBalance;
 
 }

@@ -1,8 +1,6 @@
 package com.example.fx.secondStaX.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -14,6 +12,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class Trade {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    private Long id;
+
     @ManyToOne
     @JoinColumn(name = "client_id")
     private Client client;
@@ -21,7 +24,7 @@ public class Trade {
     @JoinColumn(name = "provider_id")
     private Provider provider;
     @ManyToOne
-    @JoinColumn(name = "provider-offer")
+    @JoinColumn(name = "provider_offer_id")
     private ProviderOffer providerOffer;
 
     private LocalDateTime timestamp;

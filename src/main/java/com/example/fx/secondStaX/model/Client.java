@@ -3,6 +3,9 @@ package com.example.fx.secondStaX.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+import java.util.Set;
+
 @Entity
 @Setter
 @Getter
@@ -16,20 +19,24 @@ public class Client {
     private Long id;
 
     @Column(nullable = false)
-    private Double amount;
+    private String name;
+
+    @Column(nullable = false, name = "display_id")
+    private String displayId;
 
     @Column(nullable = false)
-    private String currency;
+    private String email;
 
     @Column(nullable = false)
-    private String status;
-
-    @ManyToOne
-    @JoinColumn(name = "bank_account_id")
-    private BankAccount bankAccount;
+    private String password;
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
-    private Trade trade;
+    private Set<BankAccount> bankAccount;
 
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    private List<Trade> trade;
+
+    @Column(nullable = false, name = "is_active")
+    private boolean isActive;
 
 }
