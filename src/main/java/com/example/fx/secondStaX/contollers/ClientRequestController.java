@@ -55,4 +55,3 @@ public class ClientRequestController {
         return new ResponseEntity<>("Added account: " + clientService.addBankAccount(id, bankAccountRequest), ACCEPTED);
     }
 }
-
